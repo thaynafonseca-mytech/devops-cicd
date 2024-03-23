@@ -1,0 +1,44 @@
+name: Terraform Deployment
+
+on:
+  #workflow_call:
+  push:
+    branches:
+      - main
+
+env: 
+   AWS_REGION : <"us-east-1">   
+
+permissions:
+  id-token: write   # This is required for requesting the JWT
+  contents: read    # This is required for actions/checkout
+
+jobs:
+  AssumeRoleAndCallIdentity:
+    name: Deploy Infrastructure
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: "" #change to reflect your IAM role’s ARN
+          role-session-name: GitHub_to_AWS
+          aws-region: ${{ env.AWS_REGION }}         
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.1.7
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Plan
+        run: terraform plan -out=tfplan
