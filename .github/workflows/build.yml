@@ -6,10 +6,10 @@ on:
       - shared
 
 env: 
-  ecr_repository: ecr-github-runner-build
-  aws_region: us-east-1
-  aws_account_id: 817697649340
-  role_to_assume: arn:aws:iam::817697649340:role/teste-thaynafonseca-mytech
+  ECR_REPOSITORY: ecr-github-runner-build
+  AWS_REGION: us-east-1
+  AWS_ACCOUNT_ID: 817697649340
+  ROLE_TO_ASSUME: arn:aws:iam::817697649340:role/teste-thaynafonseca-mytech
 
 permissions:
   id-token: write   # This is required for requesting the JWT
@@ -27,8 +27,8 @@ jobs:
       - name: Configure AWS credentials (Assume Role via OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ inputs.role_to_assume }}
-          aws-region: ${{ inputs.aws_region }}
+          role-to-assume: $ROLE_TO_ASSUME
+          aws-region: $AWS_REGION
 
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
@@ -36,7 +36,7 @@ jobs:
       - name: Set image tags
         id: vars
         run: |
-          IMAGE_URI=${{ inputs.aws_account_id }}.dkr.ecr.${{ inputs.aws_region }}.amazonaws.com/${{ inputs.ecr_repository }}
+          IMAGE_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY
           IMAGE_TAG=${GITHUB_SHA}  
 
           echo "IMAGE_URI=$IMAGE_URI" >> $GITHUB_ENV
