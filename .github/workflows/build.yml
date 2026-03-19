@@ -6,7 +6,7 @@ on:
       - shared
 
 env: 
-  ecr_repository: test-shared
+  ecr_repository: ecr-github-runner-build
   aws_region: us-east-1
   aws_account_id: 817697649340
   role_to_assume: arn:aws:iam::817697649340:role/teste-thaynafonseca-mytech
@@ -44,7 +44,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t $IMAGE_URI:$IMAGE_TAG -f Dockerfile.prod .
+          docker build -t $IMAGE_URI:$IMAGE_TAG -f Dockerfile .
           docker tag $IMAGE_URI:$IMAGE_TAG $IMAGE_URI:latest
 
       - name: Push image to ECR
