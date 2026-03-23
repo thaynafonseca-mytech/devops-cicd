@@ -1,3 +1,3 @@
 FROM public.ecr.aws/docker/library/alpine:3.19
 
-CMD ["echo", "Funcionando corretamente 🚀"]
+CMD ["echo", "Funcionando 🚀"]
