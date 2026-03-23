@@ -17,7 +17,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: codebuild-prd-teste-${{ github.run_id }}-${{ github.run_attempt }}
+    runs-on: codebuild-prd-backend-api-${{ github.run_id }}-${{ github.run_attempt }}
 
     steps:
 
