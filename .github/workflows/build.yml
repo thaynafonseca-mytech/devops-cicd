@@ -9,7 +9,7 @@ env:
   ECR_REPOSITORY: thayna-teste
   AWS_REGION: us-east-1
   AWS_ACCOUNT_ID: 817697649340
-  ROLE_TO_ASSUME: arn:aws:iam::817697649340:role/teste-thaynafonseca-mytech
+  ROLE_TO_ASSUME: arn:aws:iam::817697649340:role/github-actions-role
 
 permissions:
   id-token: write   # This is required for requesting the JWT
