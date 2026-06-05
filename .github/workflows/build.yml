@@ -3,7 +3,7 @@ name: Build e Push Docker
 on:
   push:
     branches:
-      - shared
+      - matrix
 
 env: 
   ECR_REPOSITORY: thayna-teste
