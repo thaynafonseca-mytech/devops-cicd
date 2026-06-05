@@ -6,7 +6,7 @@ on:
       - shared
 
 env: 
-  ECR_REPOSITORY: ecr-github-runner-build
+  ECR_REPOSITORY: thayna-teste
   AWS_REGION: us-east-1
   AWS_ACCOUNT_ID: 817697649340
   ROLE_TO_ASSUME: arn:aws:iam::817697649340:role/teste-thaynafonseca-mytech
@@ -17,7 +17,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: codebuild-teste-thayna-${{ github.run_id }}-${{ github.run_attempt }}
+    runs-on: ubuntu-latest
 
     steps:
 

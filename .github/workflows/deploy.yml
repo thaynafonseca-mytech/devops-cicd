@@ -1,0 +1,63 @@
+name: Deploy EC2
+
+on:
+  workflow_run:
+    workflows: ["Build e Push Docker"]
+    types:
+      - completed
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Ambiente para deploy"
+        required: true
+        type: choice
+        options:
+          - dev
+          - prod    
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    if: ${{ (github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Definir matrix de contas por ambiente
+        id: set-matrix
+        env:
+          MATRIX_DEV: '{"include":[{"account_id":"817697649340","region":"us-east-1","instance_id":"i-00000000000000"}]}'
+          MATRIX_PROD: '{"include":[{"account_id":"000000000000","region":"us-east-2","instance_id":"i-00000000000000"}]}'
+        run: |
+          ENV="${{ github.event.inputs.environment }}"
+          VAR="MATRIX_${ENV^^}"
+          echo "matrix=${!VAR}" >> $GITHUB_OUTPUT
+
+  deploy:
+    needs: prepare
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    strategy:
+      matrix: ${{ fromJson(needs.prepare.outputs.matrix) }}
+      fail-fast: false
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ matrix.account_id }}:role/github-actions-role
+          aws-region: ${{ matrix.region }}
+
+      - name: Executar deploy via SSM
+        env:
+          INSTANCE_ID: ${{ matrix.instance_id }}
+          ACCOUNT_ID: ${{ matrix.account_id }}
+          REGION: ${{ matrix.region }}
+          ENVIRONMENT: ${{ github.event.inputs.environment }}
+        run: bash .github/scripts/ssm-deploy.sh
