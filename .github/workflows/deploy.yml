@@ -1,10 +1,6 @@
 name: Deploy EC2
 
 on:
-  workflow_run:
-    workflows: ["Build e Push Docker"]
-    types:
-      - completed
   workflow_dispatch:
     inputs:
       environment:
@@ -22,7 +18,6 @@ permissions:
 jobs:
   prepare:
     runs-on: ubuntu-latest
-    if: ${{ (github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch') }}
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
